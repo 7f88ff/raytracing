@@ -5,15 +5,15 @@ use raytracing::{scale2rgb, Color, Point3d, Ray, Vec3d};
 fn hit_sphere(c: Point3d, r: f32, ray: &Ray) -> f32 {
     let oc = ray.ori - c;
 
-    let a = ray.dire.dot(ray.dire);
-    let b = 2. * oc.dot(ray.dire);
-    let c = oc.dot(oc) - r * r;
-    let d = b * b - 4. * a * c;
+    let a = ray.dire.slen();
+    let h = oc.dot(ray.dire);
+    let c = oc.slen() - r * r;
+    let d = h * h - a * c;
 
     if d < 0. {
         -1.
     } else {
-        (-b - d.sqrt()) / (2. * a)
+        (-h - d.sqrt()) / a
     }
 }
 
