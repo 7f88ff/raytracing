@@ -2,7 +2,7 @@ use std::{fs::File, io::BufWriter, path::Path};
 
 use raytracing::{scale2rgb, Color, Point3d, Ray, Vec3d};
 
-fn hit_sphere(c: Point3d, r: f32, ray: &Ray) -> bool {
+fn hit_sphere(c: Point3d, r: f32, ray: &Ray) -> f32 {
     let oc = ray.ori - c;
 
     let a = ray.dire.dot(ray.dire);
@@ -10,12 +10,18 @@ fn hit_sphere(c: Point3d, r: f32, ray: &Ray) -> bool {
     let c = oc.dot(oc) - r * r;
     let d = b * b - 4. * a * c;
 
-    d > 0.
+    if d < 0. {
+        -1.
+    } else {
+        (-b - d.sqrt()) / (2. * a)
+    }
 }
 
 fn ray_color(r: Ray) -> Color {
-    if hit_sphere(Point3d::new(0., 0., -1.), 0.5, &r) {
-        Color::new(0., 0., 1.)
+    let t = hit_sphere(Point3d::new(0., 0., -1.), 0.5, &r);
+    if t > 0. {
+        let norm = (r.at(t) - Vec3d::new(0., 0., -1.)).unit();
+        Color::new(norm.x() + 1., norm.y() + 1., norm.z() + 1.) * 0.5
     } else {
         let unit_dire = r.dire.unit();
         let t = 0.5 * (unit_dire.y() + 1.);
