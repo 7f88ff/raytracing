@@ -1,3 +1,4 @@
+mod camera;
 mod color;
 mod hittable;
 mod ray;
@@ -5,6 +6,7 @@ mod scene;
 mod sphere;
 mod vec3d;
 
+pub use camera::Camera;
 pub use color::{scale2rgb, Color};
 pub use hittable::{HitRecord, Hittable};
 pub use ray::Ray;
