@@ -37,6 +37,9 @@ impl Vec3d {
             self[0] * v[1] - self[1] * v[0],
         )
     }
+    pub fn sqrt(&self) -> Vec3d {
+        Vec3d::new(self[0].sqrt(), self[1].sqrt(), self[2].sqrt())
+    }
 }
 
 impl ops::Index<usize> for Vec3d {

@@ -13,5 +13,5 @@ pub use hittable::{HitRecord, Hittable};
 pub use ray::Ray;
 pub use scene::Scene;
 pub use sphere::Sphere;
-pub use utils::clamp;
+pub use utils::{clamp, rand_unit};
 pub use vec3d::{Point3d, Vec3d};
