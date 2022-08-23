@@ -1,27 +1,10 @@
-use std::{fs::File, io::BufWriter, path::Path};
+use std::{f32::INFINITY, fs::File, io::BufWriter, path::Path, rc::Rc};
 
-use raytracing::{scale2rgb, Color, Point3d, Ray, Vec3d};
+use raytracing::{scale2rgb, Color, Hittable, Point3d, Ray, Scene, Sphere, Vec3d};
 
-fn hit_sphere(c: Point3d, r: f32, ray: &Ray) -> f32 {
-    let oc = ray.ori - c;
-
-    let a = ray.dire.slen();
-    let h = oc.dot(ray.dire);
-    let c = oc.slen() - r * r;
-    let d = h * h - a * c;
-
-    if d < 0. {
-        -1.
-    } else {
-        (-h - d.sqrt()) / a
-    }
-}
-
-fn ray_color(r: Ray) -> Color {
-    let t = hit_sphere(Point3d::new(0., 0., -1.), 0.5, &r);
-    if t > 0. {
-        let norm = (r.at(t) - Vec3d::new(0., 0., -1.)).unit();
-        Color::new(norm.x() + 1., norm.y() + 1., norm.z() + 1.) * 0.5
+fn ray_color(r: &Ray, s: &Scene) -> Color {
+    if let Some(rec) = s.hit(r, 0., INFINITY) {
+        (rec.norm + Color::new(1., 1., 1.)) * 0.5
     } else {
         let unit_dire = r.dire.unit();
         let t = 0.5 * (unit_dire.y() + 1.);
@@ -43,6 +26,11 @@ fn main() {
     let mut img_writer = img_encoder.write_header().unwrap();
     let mut img_data: Vec<u8> = Vec::new();
 
+    // Scene
+    let mut s = Scene::new();
+    s.add(Rc::new(Sphere::new(Point3d::new(0., 0., -1.), 0.5)));
+    s.add(Rc::new(Sphere::new(Point3d::new(0., -100.5, -1.), 100.)));
+
     // Camera
     const VP_HEIGHT: f32 = 2.;
     const VP_WIDTH: f32 = ASPECT_RATIO * VP_HEIGHT;
@@ -61,7 +49,7 @@ fn main() {
             let u = i as f32 / (IMG_WIDTH - 1) as f32;
             let v = j as f32 / (IMG_HEIGHT - 1) as f32;
             let r = Ray::new(origin, base + horiz * u + verti * v - origin);
-            let rendered = ray_color(r);
+            let rendered = ray_color(&r, &s);
             img_data.extend(scale2rgb(rendered));
         }
     }
