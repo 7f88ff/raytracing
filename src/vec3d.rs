@@ -1,4 +1,4 @@
-use std::ops;
+use std::{cmp::min_by, ops};
 
 #[derive(Clone, Copy, Debug, Default)]
 pub struct Vec3d {
@@ -46,6 +46,12 @@ impl Vec3d {
     }
     pub fn reflect(&self, norm: Vec3d) -> Vec3d {
         *self - norm * 2. * self.dot(norm)
+    }
+    pub fn refract(&self, norm: Vec3d, ratio_of_ri: f32) -> Vec3d {
+        let cos_theta = min_by(-self.dot(norm), 1., |a, b| a.partial_cmp(b).unwrap());
+        let out_perp = (*self + norm * cos_theta) * ratio_of_ri;
+        let out_para = norm * -(1. - out_perp.slen()).abs().sqrt();
+        out_para + out_perp
     }
 }
 

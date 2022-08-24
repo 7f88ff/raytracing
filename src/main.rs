@@ -3,7 +3,7 @@ use std::{f32::INFINITY, fs::File, io::BufWriter, path::Path, rc::Rc};
 use rand::Rng;
 
 use raytracing::{
-    scale2rgb, Camera, Color, Hittable, Lambertian, Metal, Point3d, Ray, Scene, Sphere,
+    scale2rgb, Camera, Color, Dielectric, Hittable, Lambertian, Metal, Point3d, Ray, Scene, Sphere,
 };
 
 fn ray_color(r: &Ray, s: &Scene, depth: i32) -> Color {
@@ -46,7 +46,7 @@ fn main() {
 
     let ground_mat = Rc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0)));
     let center_mat = Rc::new(Lambertian::new(Color::new(0.5, 0.3, 0.3)));
-    let left_mat = Rc::new(Metal::new(Color::new(0.8, 0.8, 0.8)));
+    let left_mat = Rc::new(Dielectric::new(1.5));
     let right_mat = Rc::new(Metal::new(Color::new(0.8, 0.8, 0.8)));
 
     s.add(Rc::new(Sphere::new(
