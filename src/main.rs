@@ -9,7 +9,7 @@ use raytracing::{
 fn ray_color(r: &Ray, s: &Scene, depth: i32) -> Color {
     if depth <= 0 {
         Color::new(0., 0., 0.)
-    } else if let Some(rec) = s.hit(r, 1e-8, INFINITY) {
+    } else if let Some(rec) = s.hit(r, 1e-3, INFINITY) {
         if let Some((attenuation, scattered)) = rec.material.scatter(r, &rec) {
             attenuation * ray_color(&scattered, s, depth - 1)
         } else {
