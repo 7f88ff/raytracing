@@ -11,5 +11,5 @@ pub use color::{scale2rgb, Color};
 pub use material::*;
 pub use object::*;
 pub use ray::Ray;
-pub use utils::{clamp, rand_unit};
+pub use utils::{clamp, rand_in_unit_disk, rand_unit};
 pub use vec3d::{Point3d, Vec3d};

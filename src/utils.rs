@@ -23,3 +23,9 @@ pub fn rand_unit() -> Vec3d {
     )
     .unit()
 }
+
+pub fn rand_in_unit_disk() -> Vec3d {
+    let mut rng = rand::thread_rng();
+    let theta = rng.gen_range(0.0..(2. * PI));
+    Vec3d::new(theta.cos(), theta.sin(), 0.)
+}

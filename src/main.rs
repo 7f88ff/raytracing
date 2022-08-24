@@ -10,6 +10,7 @@ use rand::Rng;
 
 use raytracing::{
     scale2rgb, Camera, Color, Dielectric, Hittable, Lambertian, Metal, Point3d, Ray, Scene, Sphere,
+    Vec3d,
 };
 
 fn ray_color(r: &Ray, s: &Scene, depth: i32) -> Color {
@@ -48,17 +49,46 @@ fn main() {
     let mut img_data: Vec<u8> = Vec::new();
 
     // Scene
-    let r = (PI / 4.).cos();
     let mut s = Scene::new();
 
-    let left_mat = Rc::new(Lambertian::new(Color::new(0., 0., 1.)));
-    let right_mat = Rc::new(Lambertian::new(Color::new(1., 0., 0.)));
+    let ground_mat = Rc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0)));
+    let center_mat = Rc::new(Lambertian::new(Color::new(0.5, 0.3, 0.3)));
+    let left_mat = Rc::new(Dielectric::new(1.5));
+    let right_mat = Rc::new(Metal::new(Color::new(0.8, 0.8, 0.8)));
 
-    s.add(Rc::new(Sphere::new(Point3d::new(-r, 0., -1.), r, left_mat)));
-    s.add(Rc::new(Sphere::new(Point3d::new(r, 0., -1.), r, right_mat)));
+    s.add(Rc::new(Sphere::new(
+        Point3d::new(0., -100.5, -1.),
+        100.0,
+        ground_mat,
+    )));
+    s.add(Rc::new(Sphere::new(
+        Point3d::new(0., 0., -1.),
+        0.5,
+        center_mat,
+    )));
+    s.add(Rc::new(Sphere::new(
+        Point3d::new(-1., 0., -1.),
+        0.5,
+        left_mat,
+    )));
+    s.add(Rc::new(Sphere::new(
+        Point3d::new(1., 0., -1.),
+        0.5,
+        right_mat,
+    )));
 
     // Camera
-    let cam = Camera::from(PI / 2., ASPECT_RATIO);
+    let lookfrom = Point3d::new(3., 3., 2.);
+    let lookat = Point3d::new(0., 0., -1.);
+    let cam = Camera::from(
+        lookfrom,
+        lookat,
+        Vec3d::new(0., 1., 0.),
+        PI / 8.,
+        ASPECT_RATIO,
+        2.,
+        (lookfrom - lookat).len(),
+    );
 
     // Render
     let pb = indicatif::ProgressBar::new(IMG_HEIGHT.into());
