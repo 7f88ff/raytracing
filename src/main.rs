@@ -1,4 +1,10 @@
-use std::{f32::INFINITY, fs::File, io::BufWriter, path::Path, rc::Rc};
+use std::{
+    f32::{consts::PI, INFINITY},
+    fs::File,
+    io::BufWriter,
+    path::Path,
+    rc::Rc,
+};
 
 use rand::Rng;
 
@@ -42,36 +48,17 @@ fn main() {
     let mut img_data: Vec<u8> = Vec::new();
 
     // Scene
+    let r = (PI / 4.).cos();
     let mut s = Scene::new();
 
-    let ground_mat = Rc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0)));
-    let center_mat = Rc::new(Lambertian::new(Color::new(0.5, 0.3, 0.3)));
-    let left_mat = Rc::new(Dielectric::new(1.5));
-    let right_mat = Rc::new(Metal::new(Color::new(0.8, 0.8, 0.8)));
+    let left_mat = Rc::new(Lambertian::new(Color::new(0., 0., 1.)));
+    let right_mat = Rc::new(Lambertian::new(Color::new(1., 0., 0.)));
 
-    s.add(Rc::new(Sphere::new(
-        Point3d::new(0., -100.5, -1.),
-        100.0,
-        ground_mat,
-    )));
-    s.add(Rc::new(Sphere::new(
-        Point3d::new(0., 0., -1.),
-        0.5,
-        center_mat,
-    )));
-    s.add(Rc::new(Sphere::new(
-        Point3d::new(-1., 0., -1.),
-        0.5,
-        left_mat,
-    )));
-    s.add(Rc::new(Sphere::new(
-        Point3d::new(1., 0., -1.),
-        0.5,
-        right_mat,
-    )));
+    s.add(Rc::new(Sphere::new(Point3d::new(-r, 0., -1.), r, left_mat)));
+    s.add(Rc::new(Sphere::new(Point3d::new(r, 0., -1.), r, right_mat)));
 
     // Camera
-    let cam = Camera::default();
+    let cam = Camera::from(PI / 2., ASPECT_RATIO);
 
     // Render
     let pb = indicatif::ProgressBar::new(IMG_HEIGHT.into());
