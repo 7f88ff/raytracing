@@ -1,5 +1,7 @@
 use std::{cmp::min_by, ops};
 
+use rand::Rng;
+
 #[derive(Clone, Copy, Debug, Default)]
 pub struct Vec3d {
     pub c: [f32; 3],
@@ -8,6 +10,10 @@ pub struct Vec3d {
 impl Vec3d {
     pub fn new(x: f32, y: f32, z: f32) -> Vec3d {
         Vec3d { c: [x, y, z] }
+    }
+    pub fn random() -> Vec3d {
+        let mut rng = rand::thread_rng();
+        Vec3d::new(rng.gen::<f32>(), rng.gen::<f32>(), rng.gen::<f32>())
     }
     pub fn x(&self) -> f32 {
         self[0]

@@ -29,6 +29,67 @@ fn ray_color(r: &Ray, s: &Scene, depth: i32) -> Color {
     }
 }
 
+fn rand_scene() -> Scene {
+    let mut rng = rand::thread_rng();
+    let mut s = Scene::new();
+
+    let ground_mtrl = Rc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
+    s.add(Rc::new(Sphere::new(
+        Point3d::new(0., -1000., 0.),
+        1000.,
+        ground_mtrl,
+    )));
+
+    for a in -11..11 {
+        for b in -11..11 {
+            let choose_mtrl = rng.gen::<f32>();
+            let c = Point3d::new(
+                a as f32 + rng.gen::<f32>(),
+                0.2,
+                b as f32 + rng.gen::<f32>(),
+            );
+
+            if (c - Point3d::new(4., 0.2, 0.)).len() > 0.9 {
+                if choose_mtrl < 0.8 {
+                    let albedo = Color::random() * Color::random();
+                    let mtrl = Rc::new(Lambertian::new(albedo));
+                    s.add(Rc::new(Sphere::new(c, 0.2, mtrl)));
+                } else if choose_mtrl < 0.95 {
+                    let albedo = Color::random() * Color::random();
+                    let mtrl = Rc::new(Metal::new(albedo));
+                    s.add(Rc::new(Sphere::new(c, 0.2, mtrl)));
+                } else {
+                    let mtrl = Rc::new(Dielectric::new(1.5));
+                    s.add(Rc::new(Sphere::new(c, 0.2, mtrl)));
+                }
+            }
+        }
+    }
+
+    let material1 = Rc::new(Dielectric::new(1.5));
+    s.add(Rc::new(Sphere::new(
+        Point3d::new(0., 1., 0.),
+        1.0,
+        material1,
+    )));
+
+    let material2 = Rc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
+    s.add(Rc::new(Sphere::new(
+        Point3d::new(-4., 1., 0.),
+        1.0,
+        material2,
+    )));
+
+    let material3 = Rc::new(Metal::new(Color::new(0.7, 0.6, 0.5)));
+    s.add(Rc::new(Sphere::new(
+        Point3d::new(4., 1., 0.),
+        1.0,
+        material3,
+    )));
+
+    s
+}
+
 fn main() {
     // random generator
     let mut rng = rand::thread_rng();
@@ -49,45 +110,19 @@ fn main() {
     let mut img_data: Vec<u8> = Vec::new();
 
     // Scene
-    let mut s = Scene::new();
-
-    let ground_mat = Rc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0)));
-    let center_mat = Rc::new(Lambertian::new(Color::new(0.5, 0.3, 0.3)));
-    let left_mat = Rc::new(Dielectric::new(1.5));
-    let right_mat = Rc::new(Metal::new(Color::new(0.8, 0.8, 0.8)));
-
-    s.add(Rc::new(Sphere::new(
-        Point3d::new(0., -100.5, -1.),
-        100.0,
-        ground_mat,
-    )));
-    s.add(Rc::new(Sphere::new(
-        Point3d::new(0., 0., -1.),
-        0.5,
-        center_mat,
-    )));
-    s.add(Rc::new(Sphere::new(
-        Point3d::new(-1., 0., -1.),
-        0.5,
-        left_mat,
-    )));
-    s.add(Rc::new(Sphere::new(
-        Point3d::new(1., 0., -1.),
-        0.5,
-        right_mat,
-    )));
+    let s = rand_scene();
 
     // Camera
-    let lookfrom = Point3d::new(3., 3., 2.);
-    let lookat = Point3d::new(0., 0., -1.);
+    let lookfrom = Point3d::new(13., 2., 3.);
+    let lookat = Point3d::new(0., 0., 0.);
     let cam = Camera::from(
         lookfrom,
         lookat,
         Vec3d::new(0., 1., 0.),
         PI / 8.,
         ASPECT_RATIO,
-        2.,
-        (lookfrom - lookat).len(),
+        0.1,
+        10.,
     );
 
     // Render
