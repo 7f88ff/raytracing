@@ -1,13 +1,16 @@
-use crate::{HitRecord, Hittable, Point3d, Ray};
+use std::rc::Rc;
+
+use crate::{HitRecord, Hittable, Material, Point3d, Ray};
 
 pub struct Sphere {
     pub c: Point3d,
     pub r: f32,
+    pub m: Rc<dyn Material>,
 }
 
 impl Sphere {
-    pub fn new(c: Point3d, r: f32) -> Sphere {
-        Sphere { c, r }
+    pub fn new(c: Point3d, r: f32, m: Rc<dyn Material>) -> Sphere {
+        Sphere { c, r, m }
     }
 }
 
@@ -33,6 +36,7 @@ impl Hittable for Sphere {
                 Some(HitRecord::from(
                     r.at(root),
                     root,
+                    self.m.clone(),
                     (r.at(root) - self.c) / self.r,
                     &r,
                 ))

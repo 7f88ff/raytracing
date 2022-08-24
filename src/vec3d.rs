@@ -40,6 +40,10 @@ impl Vec3d {
     pub fn sqrt(&self) -> Vec3d {
         Vec3d::new(self[0].sqrt(), self[1].sqrt(), self[2].sqrt())
     }
+    pub fn near_zero(&self) -> bool {
+        const EPS: f32 = 1e-8;
+        self[0].abs() < EPS && self[1].abs() < EPS && self[2].abs() < EPS
+    }
 }
 
 impl ops::Index<usize> for Vec3d {
@@ -80,6 +84,13 @@ impl ops::Mul<f32> for Vec3d {
     type Output = Vec3d;
     fn mul(self, rhs: f32) -> Self::Output {
         Vec3d::new(self[0] * rhs, self[1] * rhs, self[2] * rhs)
+    }
+}
+
+impl ops::Mul<Vec3d> for Vec3d {
+    type Output = Vec3d;
+    fn mul(self, rhs: Vec3d) -> Self::Output {
+        Vec3d::new(self[0] * rhs[0], self[1] * rhs[1], self[2] * rhs[2])
     }
 }
 

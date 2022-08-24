@@ -23,3 +23,7 @@ pub fn rand_unit() -> Vec3d {
     )
     .unit()
 }
+
+pub fn reflect(u: Vec3d, norm: Vec3d) -> Vec3d {
+    u - norm * 2. * u.dot(norm)
+}
