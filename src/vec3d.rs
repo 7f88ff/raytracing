@@ -44,6 +44,9 @@ impl Vec3d {
         const EPS: f32 = 1e-8;
         self[0].abs() < EPS && self[1].abs() < EPS && self[2].abs() < EPS
     }
+    pub fn reflect(&self, norm: Vec3d) -> Vec3d {
+        *self - norm * 2. * self.dot(norm)
+    }
 }
 
 impl ops::Index<usize> for Vec3d {
