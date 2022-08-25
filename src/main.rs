@@ -9,8 +9,8 @@ use std::{
 use rand::Rng;
 
 use raytracing::{
-    scale2rgb, Camera, Color, Dielectric, Hittable, Lambertian, Metal, Point3d, Ray, Scene, Sphere,
-    Vec3d,
+    scale2rgb, Camera, Color, Dielectric, Hittable, Lambertian, Metal, Plane, Point3d, Ray, Scene,
+    Sphere, Vec3d,
 };
 
 fn ray_color(r: &Ray, s: &Scene, depth: i32) -> Color {
@@ -85,6 +85,13 @@ fn rand_scene() -> Scene {
         Point3d::new(4., 1., 0.),
         1.0,
         material3,
+    )));
+
+    let material4 = Rc::new(Metal::new(Color::new(0.5, 0.5, 0.5)));
+    s.add(Rc::new(Plane::new(
+        Point3d::new(-10., 1., 0.),
+        Vec3d::new(-1., 0., 0.),
+        material4,
     )));
 
     s

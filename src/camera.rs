@@ -62,8 +62,8 @@ impl Camera {
         let rd = rand_in_unit_disk() * self.lens_r;
         let offset = self.u * rd.x() + self.v * rd.y();
         Ray::new(
-            self.origin + offset,
-            self.base + self.horizontal * s + self.vertical * t - self.origin - offset,
+            self.origin,
+            self.base + self.horizontal * s + self.vertical * t - self.origin,
         )
     }
 }
